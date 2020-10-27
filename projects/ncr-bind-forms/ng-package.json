@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/ncr-bind-forms",
+  "lib": {
+    "entryFile": "index.ts"
+  }
+}

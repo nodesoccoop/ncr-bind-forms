@@ -2,5 +2,46 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "projects": {}
+  "projects": {
+    "ncr-bind-forms": {
+      "projectType": "library",
+      "root": "projects/ncr-bind-forms",
+      "sourceRoot": "projects/ncr-bind-forms/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ncr-bind-forms/tsconfig.lib.json",
+            "project": "projects/ncr-bind-forms/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ncr-bind-forms/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ncr-bind-forms/src/test.ts",
+            "tsConfig": "projects/ncr-bind-forms/tsconfig.spec.json",
+            "karmaConfig": "projects/ncr-bind-forms/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ncr-bind-forms/tsconfig.lib.json",
+              "projects/ncr-bind-forms/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }},
+  "defaultProject": "ncr-bind-forms"
 }

@@ -14,7 +14,13 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ncr-bind-forms": [
+        "dist/ncr-bind-forms/ncr-bind-forms",
+        "dist/ncr-bind-forms"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
