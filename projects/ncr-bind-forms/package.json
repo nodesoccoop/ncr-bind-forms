@@ -1,11 +1,27 @@
 {
-  "name": "ncr-bind-forms",
-  "version": "0.0.1",
-  "peerDependencies": {
-    "@angular/common": "^9.1.12",
-    "@angular/core": "^9.1.12"
-  },
-  "dependencies": {
-    "tslib": "^1.10.0"
-  }
+    "name": "@nodesoccoop/ncr-bind-forms",
+    "version": "0.0.1",
+    "peerDependencies": {
+        "@angular/common": "^9.1.12",
+        "@angular/core": "^9.1.12"
+    },
+    "dependencies": {
+        "tslib": "^1.10.0"
+    },
+    "description": "This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.12.",
+    "main": "index.ts",
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nodesoccoop/ncr-bind-forms.git"
+    },
+    "author": "egrassinode",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/nodesoccoop/ncr-bind-forms/issues"
+    },
+    "homepage": "https://github.com/nodesoccoop/ncr-bind-forms#readme"
 }
