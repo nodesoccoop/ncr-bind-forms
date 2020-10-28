@@ -7,7 +7,7 @@
  */
 
 import { ɵgetDOM as getDOM } from '@angular/platform-browser';
-import { Directive, ElementRef, Inject, InjectionToken, Optional, Renderer2, forwardRef } from '@angular/core';
+import { Directive, ElementRef, Inject, InjectionToken, Optional, Renderer2, forwardRef, HostListener } from '@angular/core';
 import { ControlBindValueAccessor, NG_BIND_VALUE_ACCESSOR } from './control_value_accessor';
 
 export const DEFAULT_VALUE_ACCESSOR: any = {
@@ -60,19 +60,25 @@ export const COMPOSITION_BUFFER_MODE = new InjectionToken<boolean>('CompositionE
  */
 @Directive({
     selector:
+        // tslint:disable-next-line: directive-selector
         'input:not([type=checkbox])[formBindControlName],textarea[formBindControlName],input:not([type=checkbox])[formBindControl],textarea[formBindControl],input:not([type=checkbox])[ngBindModel],textarea[ngBindModel],[ngDefaultControl]',
     // TODO: vsavkin replace the above selector with the one below it once
     // https://github.com/angular/angular/issues/3011 is implemented
     // selector: '[ngBindModel],[formBindControl],[formBindControlName]',
     host: {
         '(input)': '$any(this)._handleInput($event.target.value)',
-        '(blur)': 'onTouched()',
-        '(compositionstart)': '$any(this)._compositionStart()',
-        '(compositionend)': '$any(this)._compositionEnd($event.target.value)',
     },
     providers: [DEFAULT_VALUE_ACCESSOR],
 })
 export class DefaultBindValueAccessor implements ControlBindValueAccessor {
+    constructor(private _renderer: Renderer2, private _elementRef: ElementRef, @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
+        if (this._compositionMode == null) {
+            this._compositionMode = !_isAndroid();
+        }
+    }
+
+    /** Whether the user is creating a composition string (IME events). */
+    private _composing = false;
     /**
      * @description
      * The registered callback function called when an input event occurs on the input element.
@@ -83,16 +89,8 @@ export class DefaultBindValueAccessor implements ControlBindValueAccessor {
      * @description
      * The registered callback function called when a blur event occurs on the input element.
      */
+    @HostListener('blur')
     onTouched = () => {};
-
-    /** Whether the user is creating a composition string (IME events). */
-    private _composing = false;
-
-    constructor(private _renderer: Renderer2, private _elementRef: ElementRef, @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
-        if (this._compositionMode == null) {
-            this._compositionMode = !_isAndroid();
-        }
-    }
 
     /**
      * Sets the "value" property on the input element.
@@ -134,6 +132,7 @@ export class DefaultBindValueAccessor implements ControlBindValueAccessor {
     }
 
     /** @internal */
+    @HostListener('input', ['$event.target.value'])
     _handleInput(value: any): void {
         if (!this._compositionMode || (this._compositionMode && !this._composing)) {
             this.onChange(value);
@@ -141,11 +140,13 @@ export class DefaultBindValueAccessor implements ControlBindValueAccessor {
     }
 
     /** @internal */
+    @HostListener('compositionstart', [])
     _compositionStart(): void {
         this._composing = true;
     }
 
     /** @internal */
+    @HostListener('compositionend', ['$event.target.value'])
     _compositionEnd(value: any): void {
         this._composing = false;
         this._compositionMode && this.onChange(value);

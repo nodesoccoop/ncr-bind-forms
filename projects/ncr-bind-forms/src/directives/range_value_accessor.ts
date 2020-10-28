@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Directive, ElementRef, Renderer2, StaticProvider, forwardRef } from '@angular/core';
+import { Directive, ElementRef, Renderer2, StaticProvider, forwardRef, HostListener } from '@angular/core';
 
 import { ControlBindValueAccessor, NG_BIND_VALUE_ACCESSOR } from './control_value_accessor';
 
 export const RANGE_VALUE_ACCESSOR: StaticProvider = {
     provide: NG_BIND_VALUE_ACCESSOR,
     useExisting: forwardRef(() => RangeBindValueAccessor),
-    multi: true
+    multi: true,
 };
 
 /**
@@ -41,13 +41,9 @@ export const RANGE_VALUE_ACCESSOR: StaticProvider = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'input[type=range][formBindControlName],input[type=range][formBindControl],input[type=range][ngBindModel]',
-    host: {
-        '(change)': 'onChange($event.target.value)',
-        '(input)': 'onChange($event.target.value)',
-        '(blur)': 'onTouched()'
-    },
-    providers: [RANGE_VALUE_ACCESSOR]
+    providers: [RANGE_VALUE_ACCESSOR],
 })
 export class RangeBindValueAccessor implements ControlBindValueAccessor {
     /**
@@ -55,12 +51,15 @@ export class RangeBindValueAccessor implements ControlBindValueAccessor {
      * The registered callback function called when a change or input event occurs on the input
      * element.
      */
+    @HostListener('change', ['$event.target.value'])
+    @HostListener('input', ['$event.target.value'])
     onChange = (_: any) => {};
 
     /**
      * @description
      * The registered callback function called when a blur event occurs on the input element.
      */
+    @HostListener('blur')
     onTouched = () => {};
 
     constructor(private _renderer: Renderer2, private _elementRef: ElementRef) {}
@@ -82,7 +81,7 @@ export class RangeBindValueAccessor implements ControlBindValueAccessor {
      */
     registerOnChange(fn: (_: number | null) => void): void {
         this.onChange = (value) => {
-            fn(value == '' ? null : parseFloat(value));
+            fn(value === '' ? null : parseFloat(value));
         };
     }
 

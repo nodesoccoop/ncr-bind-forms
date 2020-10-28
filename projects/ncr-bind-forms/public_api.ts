@@ -6,11 +6,34 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-/**
- * @module
- * @description
- * Entry point for all public APIs of this package.
- */
-export * from './src/forms';
+export {
+    BindForm,
+    NgBindControl,
+    NgBindFormDirective,
+    NgBindModel,
+    NgBindModelGroup,
+    BindFormControlName,
+    BindFormGroupDirective,
+    BindFormArrayName,
+    BindFormGroupName,
+    BindFormBuilder,
+    BindFormArray,
+    BindFormControl,
+    BindFormGroup,
+    BindFormControlType,
+} from './src/forms';
 
-// This file only reexports content of the `src` folder. Keep it that way.
+export {
+    AsyncBindValidator,
+    AsyncBindValidatorFn,
+    CheckboxRequiredValidator,
+    EmailValidator,
+    MaxLengthValidator,
+    MinLengthValidator,
+    PatternValidator,
+    RequiredValidator,
+    ValidationBindErrors,
+    ErrorItemType,
+    BindValidator,
+    BindValidatorFn,
+} from './src/directives/validators';

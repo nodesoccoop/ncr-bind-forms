@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Directive, Input, OnChanges, SimpleChanges, StaticProvider, forwardRef } from '@angular/core';
+import { Directive, Input, OnChanges, SimpleChanges, StaticProvider, forwardRef, HostBinding } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { AbstractBindControl } from '../model';
@@ -157,20 +157,20 @@ export const CHECKBOX_REQUIRED_VALIDATOR: StaticProvider = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: ':not([type=checkbox])[required][formBindControlName],:not([type=checkbox])[required][formBindControl],:not([type=checkbox])[required][ngBindModel]',
     providers: [REQUIRED_VALIDATOR],
-    host: { '[attr.required]': 'required ? "" : null' },
 })
 export class RequiredValidator implements BindValidator {
-    // TODO(issue/24571): remove '!'.
-    private _required!: boolean;
-    // TODO(issue/24571): remove '!'.
-    private _onChange!: () => void;
+    private _required: boolean;
+
+    private _onChange: () => void;
 
     /**
      * @description
      * Tracks changes to the required attribute bound to this directive.
      */
+    @HostBinding('attr.required')
     @Input()
     get required(): boolean | string {
         return this._required;
@@ -222,9 +222,9 @@ export class RequiredValidator implements BindValidator {
  * @ngModule BindReactiveFormsModule
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'input[type=checkbox][required][formBindControlName],input[type=checkbox][required][formBindControl],input[type=checkbox][required][ngBindModel]',
     providers: [CHECKBOX_REQUIRED_VALIDATOR],
-    host: { '[attr.required]': 'required ? "" : null' },
 })
 export class CheckboxRequiredValidator extends RequiredValidator {
     /**
@@ -270,14 +270,14 @@ export const EMAIL_VALIDATOR: any = {
  * @ngModule BindReactiveFormsModule
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: '[email][formBindControlName],[email][formBindControl],[email][ngBindModel]',
     providers: [EMAIL_VALIDATOR],
 })
 export class EmailValidator implements BindValidator {
-    // TODO(issue/24571): remove '!'.
-    private _enabled!: boolean;
-    // TODO(issue/24571): remove '!'.
-    private _onChange!: () => void;
+    private _enabled: boolean;
+
+    private _onChange: () => void;
 
     /**
      * @description
@@ -316,9 +316,7 @@ export class EmailValidator implements BindValidator {
  *
  * @publicApi
  */
-export interface BindValidatorFn {
-    (control: AbstractBindControl): ValidationBindErrors | null;
-}
+export type BindValidatorFn = (control: AbstractBindControl) => ValidationBindErrors | null;
 
 /**
  * @description
@@ -327,9 +325,7 @@ export interface BindValidatorFn {
  *
  * @publicApi
  */
-export interface AsyncBindValidatorFn {
-    (control: AbstractBindControl): Promise<ValidationBindErrors | null> | Observable<ValidationBindErrors | null>;
-}
+export type AsyncBindValidatorFn = (control: AbstractBindControl) => Promise<ValidationBindErrors | null> | Observable<ValidationBindErrors | null>;
 
 /**
  * @description
@@ -363,22 +359,22 @@ export const MIN_LENGTH_VALIDATOR: any = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: '[minlength][formBindControlName],[minlength][formBindControl],[minlength][ngBindModel]',
     providers: [MIN_LENGTH_VALIDATOR],
-    host: { '[attr.minlength]': 'minlength ? minlength : null' },
 })
 export class MinLengthValidator implements BindValidator, OnChanges {
-    // TODO(issue/24571): remove '!'.
-    private _validator!: BindValidatorFn;
-    // TODO(issue/24571): remove '!'.
-    private _onChange!: () => void;
+    private _validator: BindValidatorFn;
+
+    private _onChange: () => void;
 
     /**
      * @description
      * Tracks changes to the the minimum length bound to this directive.
      */
-    // TODO(issue/24571): remove '!'.
-    @Input() minlength!: string | number;
+    @HostBinding('attr.minlength')
+    @Input()
+    minlength: string | number;
 
     /**
      * @description
@@ -450,22 +446,22 @@ export const MAX_LENGTH_VALIDATOR: any = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: '[maxlength][formBindControlName],[maxlength][formBindControl],[maxlength][ngBindModel]',
     providers: [MAX_LENGTH_VALIDATOR],
-    host: { '[attr.maxlength]': 'maxlength ? maxlength : null' },
 })
 export class MaxLengthValidator implements BindValidator, OnChanges {
-    // TODO(issue/24571): remove '!'.
-    private _validator!: BindValidatorFn;
-    // TODO(issue/24571): remove '!'.
-    private _onChange!: () => void;
+    private _validator: BindValidatorFn;
+
+    private _onChange: () => void;
 
     /**
      * @description
      * Tracks changes to the the maximum length bound to this directive.
      */
-    // TODO(issue/24571): remove '!'.
-    @Input() maxlength!: string | number;
+    @HostBinding('attr.maxlength')
+    @Input()
+    maxlength!: string | number;
 
     /**
      * @description
@@ -539,22 +535,22 @@ export const PATTERN_VALIDATOR: any = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: '[pattern][formBindControlName],[pattern][formBindControl],[pattern][ngBindModel]',
     providers: [PATTERN_VALIDATOR],
-    host: { '[attr.pattern]': 'pattern ? pattern : null' },
 })
 export class PatternValidator implements BindValidator, OnChanges {
-    // TODO(issue/24571): remove '!'.
-    private _validator!: BindValidatorFn;
-    // TODO(issue/24571): remove '!'.
-    private _onChange!: () => void;
+    private _validator: BindValidatorFn;
+
+    private _onChange: () => void;
 
     /**
      * @description
      * Tracks changes to the pattern bound to this directive.
      */
-    // TODO(issue/24571): remove '!'.
-    @Input() pattern!: string | RegExp;
+    @HostBinding('attr.pattern')
+    @Input()
+    pattern: string | RegExp;
 
     /**
      * @description

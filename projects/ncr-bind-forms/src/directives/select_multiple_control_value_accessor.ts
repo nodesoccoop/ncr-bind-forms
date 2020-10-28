@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Directive, ElementRef, Host, Input, OnDestroy, Optional, Renderer2, StaticProvider, forwardRef, ɵlooseIdentical as looseIdentical } from '@angular/core';
+import { Directive, ElementRef, Host, Input, OnDestroy, Optional, Renderer2, StaticProvider, forwardRef, HostListener } from '@angular/core';
 
 import { ControlBindValueAccessor, NG_BIND_VALUE_ACCESSOR } from './control_value_accessor';
 
 export const SELECT_MULTIPLE_VALUE_ACCESSOR: StaticProvider = {
     provide: NG_BIND_VALUE_ACCESSOR,
     useExisting: forwardRef(() => SelectMultipleControlBindValueAccessor),
-    multi: true
+    multi: true,
 };
 
 function _buildValueString(id: string, value: any): string {
@@ -76,34 +76,11 @@ abstract class HTMLCollection {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'select[multiple][formBindControlName],select[multiple][formBindControl],select[multiple][ngBindModel]',
-    host: { '(change)': 'onChange($event.target)', '(blur)': 'onTouched()' },
-    providers: [SELECT_MULTIPLE_VALUE_ACCESSOR]
+    providers: [SELECT_MULTIPLE_VALUE_ACCESSOR],
 })
 export class SelectMultipleControlBindValueAccessor implements ControlBindValueAccessor {
-    /**
-     * @description
-     * The current value
-     */
-    value: any;
-
-    /** @internal */
-    _optionMap: Map<string, ɵNgSelectMultipleOption> = new Map<string, ɵNgSelectMultipleOption>();
-    /** @internal */
-    _idCounter: number = 0;
-
-    /**
-     * @description
-     * The registered callback function called when a change event occurs on the input element.
-     */
-    onChange = (_: any) => {};
-
-    /**
-     * @description
-     * The registered callback function called when a blur event occurs on the input element.
-     */
-    onTouched = () => {};
-
     /**
      * @description
      * Tracks the option comparison algorithm for tracking identities when
@@ -117,9 +94,33 @@ export class SelectMultipleControlBindValueAccessor implements ControlBindValueA
         this._compareWith = fn;
     }
 
-    private _compareWith: (o1: any, o2: any) => boolean = looseIdentical;
-
     constructor(private _renderer: Renderer2, private _elementRef: ElementRef) {}
+    /**
+     * @description
+     * The current value
+     */
+    value: any;
+
+    /** @internal */
+    _optionMap: Map<string, ɵNgSelectMultipleOption> = new Map<string, ɵNgSelectMultipleOption>();
+    /** @internal */
+    _idCounter = 0;
+
+    private _compareWith: (o1: any, o2: any) => boolean = Object.is;
+
+    /**
+     * @description
+     * The registered callback function called when a change event occurs on the input element.
+     */
+    @HostListener('change', ['$event.target'])
+    onChange = (_: any) => {};
+
+    /**
+     * @description
+     * The registered callback function called when a blur event occurs on the input element.
+     */
+    @HostListener('blur')
+    onTouched = () => {};
 
     /**
      * @description
@@ -165,7 +166,7 @@ export class SelectMultipleControlBindValueAccessor implements ControlBindValueA
             }
             // Degrade on IE
             else {
-                const options: HTMLCollection = <HTMLCollection>_.options;
+                const options: HTMLCollection = _.options as HTMLCollection;
                 for (let i = 0; i < options.length; i++) {
                     const opt: HTMLOption = options.item(i);
                     if (opt.selected) {
@@ -230,7 +231,9 @@ export class SelectMultipleControlBindValueAccessor implements ControlBindValueA
  * @ngModule BindFormsModule
  * @publicApi
  */
+// tslint:disable-next-line: directive-selector
 @Directive({ selector: 'option' })
+// tslint:disable-next-line: class-name
 export class ɵNgSelectMultipleOption implements OnDestroy {
     // TODO(issue/24571): remove '!'.
     id!: string;

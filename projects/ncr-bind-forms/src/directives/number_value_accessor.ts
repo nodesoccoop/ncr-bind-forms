@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Directive, ElementRef, Renderer2, forwardRef } from '@angular/core';
+import { Directive, ElementRef, Renderer2, forwardRef, HostListener } from '@angular/core';
 
 import { ControlBindValueAccessor, NG_BIND_VALUE_ACCESSOR } from './control_value_accessor';
 
 export const NUMBER_VALUE_ACCESSOR: any = {
     provide: NG_BIND_VALUE_ACCESSOR,
     useExisting: forwardRef(() => NumberBindValueAccessor),
-    multi: true
+    multi: true,
 };
 
 /**
@@ -41,13 +41,9 @@ export const NUMBER_VALUE_ACCESSOR: any = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'input[type=number][formBindControlName],input[type=number][formBindControl],input[type=number][ngBindModel]',
-    host: {
-        '(change)': 'onChange($event.target.value)',
-        '(input)': 'onChange($event.target.value)',
-        '(blur)': 'onTouched()'
-    },
-    providers: [NUMBER_VALUE_ACCESSOR]
+    providers: [NUMBER_VALUE_ACCESSOR],
 })
 export class NumberBindValueAccessor implements ControlBindValueAccessor {
     /**
@@ -55,12 +51,15 @@ export class NumberBindValueAccessor implements ControlBindValueAccessor {
      * The registered callback function called when a change or input event occurs on the input
      * element.
      */
+    @HostListener('change', ['$event.target.value'])
+    @HostListener('input', ['$event.target.value'])
     onChange = (_: any) => {};
 
     /**
      * @description
      * The registered callback function called when a blur event occurs on the input element.
      */
+    @HostListener('blur')
     onTouched = () => {};
 
     constructor(private _renderer: Renderer2, private _elementRef: ElementRef) {}
@@ -84,7 +83,7 @@ export class NumberBindValueAccessor implements ControlBindValueAccessor {
      */
     registerOnChange(fn: (_: number | null) => void): void {
         this.onChange = (value) => {
-            fn(value == '' ? null : parseFloat(value));
+            fn(value === '' ? null : parseFloat(value));
         };
     }
 

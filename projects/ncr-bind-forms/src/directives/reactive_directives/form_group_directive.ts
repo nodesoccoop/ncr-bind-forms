@@ -24,7 +24,7 @@ import {
 } from '../public_api';
 
 import { BindFormControlName } from './form_control_name';
-import { FormArrayName, BindFormGroupName } from './form_group_name';
+import { BindFormArrayName, BindFormGroupName } from './form_group_name';
 
 export const bindFormDirectiveProvider: any = {
     provide: BindControlContainer,
@@ -39,7 +39,7 @@ export const bindFormDirectiveProvider: any = {
  * This directive accepts an existing `BindFormGroup` instance. It will then use this
  * `BindFormGroup` instance to match any child `BindFormControl`, `BindFormGroup`,
  * and `BindFormArray` instances to child `BindFormControlName`, `BindFormGroupName`,
- * and `FormArrayName` directives.
+ * and `BindFormArrayName` directives.
  *
  * @see [Reactive Forms Guide](guide/reactive-forms)
  * @see `AbstractBindControl`
@@ -55,6 +55,7 @@ export const bindFormDirectiveProvider: any = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: '[bindFormGroup]',
     providers: [bindFormDirectiveProvider],
     exportAs: 'ngBindForm',
@@ -195,11 +196,11 @@ export class BindFormGroupDirective extends BindControlContainer implements Bind
     }
 
     /**
-     * Adds a new `FormArrayName` directive instance to the form.
+     * Adds a new `BindFormArrayName` directive instance to the form.
      *
-     * @param dir The `FormArrayName` directive instance.
+     * @param dir The `BindFormArrayName` directive instance.
      */
-    addFormArray(dir: FormArrayName): void {
+    addFormArray(dir: BindFormArrayName): void {
         const ctrl: any = this.form.get(dir.path);
         setUpFormContainer(ctrl, dir);
         ctrl.updateValueAndValidity({ emitEvent: false });
@@ -208,17 +209,17 @@ export class BindFormGroupDirective extends BindControlContainer implements Bind
     /**
      * No-op method to remove the form array.
      *
-     * @param dir The `FormArrayName` directive instance.
+     * @param dir The `BindFormArrayName` directive instance.
      */
-    removeFormArray(dir: FormArrayName): void {}
+    removeFormArray(dir: BindFormArrayName): void {}
 
     /**
      * @description
-     * Retrieves the `BindFormArray` for a provided `FormArrayName` directive instance.
+     * Retrieves the `BindFormArray` for a provided `BindFormArrayName` directive instance.
      *
-     * @param dir The `FormArrayName` directive instance.
+     * @param dir The `BindFormArrayName` directive instance.
      */
-    getFormArray(dir: FormArrayName): BindFormArray {
+    getFormArray(dir: BindFormArrayName): BindFormArray {
         return this.form.get(dir.path) as BindFormArray;
     }
 

@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { AfterViewInit, Directive, EventEmitter, Inject, Input, Optional, Self, forwardRef } from '@angular/core';
+import { AfterViewInit, Directive, EventEmitter, Inject, Input, Optional, Self, forwardRef, HostListener, Output } from '@angular/core';
 
 import { AbstractBindControl, BindFormControl, BindFormGroup, BindFormHooks } from '../model';
 import { removeDir } from '../shared';
@@ -97,10 +97,9 @@ const resolvedPromise = (() => Promise.resolve(null))();
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'form:not([ngNoBindForm]):not([bindFormGroup]),ng-bind-form,[ngBindForm]',
     providers: [bindFormDirectiveProvider],
-    host: { '(submit)': 'onSubmit($event)', '(reset)': 'onReset()' },
-    outputs: ['ngSubmit'],
     exportAs: 'ngBindForm',
 })
 export class NgBindFormDirective extends BindControlContainer implements BindForm, AfterViewInit {
@@ -122,7 +121,7 @@ export class NgBindFormDirective extends BindControlContainer implements BindFor
      * @description
      * Event emitter for the "ngSubmit" event
      */
-    ngSubmit = new EventEmitter();
+    @Output() ngSubmit = new EventEmitter();
 
     /**
      * @description
@@ -297,6 +296,7 @@ export class NgBindFormDirective extends BindControlContainer implements BindFor
      *
      * @param $event The "submit" event object
      */
+    @HostListener('submit', ['$event'])
     onSubmit($event: Event): boolean {
         (this as { submitted: boolean }).submitted = true;
         syncPendingControls(this.form, this._directives);
@@ -308,6 +308,7 @@ export class NgBindFormDirective extends BindControlContainer implements BindFor
      * @description
      * Method called when the "reset" event is triggered on the form.
      */
+    @HostListener('reset')
     onReset(): void {
         this.resetForm();
     }

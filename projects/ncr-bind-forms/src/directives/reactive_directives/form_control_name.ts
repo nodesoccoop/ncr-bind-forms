@@ -20,11 +20,11 @@ import { AsyncBindValidator, AsyncBindValidatorFn, BindValidator, BindValidatorF
 
 import { NG_MODEL_WITH_FORM_CONTROL_WARNING } from './form_control_directive';
 import { BindFormGroupDirective } from './form_group_directive';
-import { FormArrayName, BindFormGroupName } from './form_group_name';
+import { BindFormArrayName, BindFormGroupName } from './form_group_name';
 
 export const controlNameBinding: any = {
     provide: NgBindControl,
-    useExisting: forwardRef(() => BindFormControlName)
+    useExisting: forwardRef(() => BindFormControlName),
 };
 
 /**
@@ -125,35 +125,9 @@ export const controlNameBinding: any = {
  * @ngModule BindReactiveFormsModule
  * @publicApi
  */
+// tslint:disable-next-line: directive-selector
 @Directive({ selector: '[formBindControlName]', providers: [controlNameBinding] })
 export class BindFormControlName extends NgBindControl implements OnChanges, OnDestroy {
-    private _added = false;
-    /**
-     * @description
-     * Internal reference to the view model value.
-     * @internal
-     */
-    viewModel: any;
-
-    /**
-     * @description
-     * Tracks the `BindFormControl` instance bound to the directive.
-     */
-    // TODO(issue/24571): remove '!'.
-    readonly control!: BindFormControl;
-
-    /**
-     * @description
-     * Tracks the name of the `BindFormControl` bound to the directive. The name corresponds
-     * to a key in the parent `BindFormGroup` or `BindFormArray`.
-     * Accepts a name as a string or a number.
-     * The name in the form of a string is useful for individual forms,
-     * while the numerical form allows for form controls to be bound
-     * to indices when iterating over controls in a `BindFormArray`.
-     */
-    // TODO(issue/24571): remove '!'.
-    @Input('formBindControlName') name!: string | number | null;
-
     /**
      * @description
      * Triggers a warning that this input should not be used with reactive forms.
@@ -162,32 +136,6 @@ export class BindFormControlName extends NgBindControl implements OnChanges, OnD
     set isDisabled(isDisabled: boolean) {
         ReactiveBindErrors.disabledAttrWarning();
     }
-
-    // TODO(kara): remove next 4 properties once deprecation period is over
-
-    /** @deprecated as of v6 */
-    @Input('ngBindModel') model: any;
-
-    /** @deprecated as of v6 */
-    @Output('ngModelChange') update = new EventEmitter();
-
-    /**
-     * @description
-     * Static property used to track whether any ngBindModel warnings have been sent across
-     * all instances of BindFormControlName. Used to support warning config of "once".
-     *
-     * @internal
-     */
-    static _ngModelWarningSentOnce = false;
-
-    /**
-     * @description
-     * Instance property used to track whether an ngBindModel warning has been sent out for this
-     * particular BindFormControlName instance. Used to support warning config of "always".
-     *
-     * @internal
-     */
-    _ngModelWarningSent = false;
 
     constructor(
         @Optional() @Host() @SkipSelf() parent: BindControlContainer,
@@ -201,42 +149,6 @@ export class BindFormControlName extends NgBindControl implements OnChanges, OnD
         this._rawValidators = validators || [];
         this._rawAsyncValidators = asyncValidators || [];
         this.valueAccessor = selectValueAccessor(this, valueAccessors);
-    }
-
-    /**
-     * @description
-     * A lifecycle method called when the directive's inputs change. For internal use only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
-    ngOnChanges(changes: SimpleChanges) {
-        if (!this._added) this._setUpControl();
-        if (isPropertyUpdated(changes, this.viewModel)) {
-            _ngModelWarning('formBindControlName', BindFormControlName, this, this._ngModelWarningConfig);
-            this.viewModel = this.model;
-            this.formDirective.updateModel(this, this.model);
-        }
-    }
-
-    /**
-     * @description
-     * Lifecycle method called before the directive's instance is destroyed. For internal use only.
-     */
-    ngOnDestroy(): void {
-        if (this.formDirective) {
-            this.formDirective.removeControl(this);
-        }
-    }
-
-    /**
-     * @description
-     * Sets the new value for the view model and emits an `ngModelChange` event.
-     *
-     * @param newValue The new value for the view model.
-     */
-    viewToModelUpdate(newValue: any): void {
-        this.viewModel = newValue;
-        this.update.emit(newValue);
     }
 
     /**
@@ -274,10 +186,100 @@ export class BindFormControlName extends NgBindControl implements OnChanges, OnD
         return composeAsyncValidators(this._rawAsyncValidators)!;
     }
 
+    /**
+     * @description
+     * Static property used to track whether any ngBindModel warnings have been sent across
+     * all instances of BindFormControlName. Used to support warning config of "once".
+     *
+     * @internal
+     */
+    static _ngModelWarningSentOnce = false;
+    private _added = false;
+    /**
+     * @description
+     * Internal reference to the view model value.
+     * @internal
+     */
+    viewModel: any;
+
+    /**
+     * @description
+     * Tracks the `BindFormControl` instance bound to the directive.
+     */
+    // TODO(issue/24571): remove '!'.
+    readonly control!: BindFormControl;
+
+    /**
+     * @description
+     * Tracks the name of the `BindFormControl` bound to the directive. The name corresponds
+     * to a key in the parent `BindFormGroup` or `BindFormArray`.
+     * Accepts a name as a string or a number.
+     * The name in the form of a string is useful for individual forms,
+     * while the numerical form allows for form controls to be bound
+     * to indices when iterating over controls in a `BindFormArray`.
+     */
+    // TODO(issue/24571): remove '!'.
+    @Input('formBindControlName') name!: string | number | null;
+
+    // TODO(kara): remove next 4 properties once deprecation period is over
+
+    /** @deprecated as of v6 */
+    // tslint:disable-next-line: no-input-rename
+    @Input('ngBindModel') model: any;
+
+    /** @deprecated as of v6 */
+    // tslint:disable-next-line: no-output-rename
+    @Output('ngModelChange') update = new EventEmitter();
+
+    /**
+     * @description
+     * Instance property used to track whether an ngBindModel warning has been sent out for this
+     * particular BindFormControlName instance. Used to support warning config of "always".
+     *
+     * @internal
+     */
+    _ngModelWarningSent = false;
+
+    /**
+     * @description
+     * A lifecycle method called when the directive's inputs change. For internal use only.
+     *
+     * @param changes A object of key/value pairs for the set of changed inputs.
+     */
+    ngOnChanges(changes: SimpleChanges) {
+        if (!this._added) this._setUpControl();
+        if (isPropertyUpdated(changes, this.viewModel)) {
+            _ngModelWarning('formBindControlName', BindFormControlName, this, this._ngModelWarningConfig);
+            this.viewModel = this.model;
+            this.formDirective.updateModel(this, this.model);
+        }
+    }
+
+    /**
+     * @description
+     * Lifecycle method called before the directive's instance is destroyed. For internal use only.
+     */
+    ngOnDestroy(): void {
+        if (this.formDirective) {
+            this.formDirective.removeControl(this);
+        }
+    }
+
+    /**
+     * @description
+     * Sets the new value for the view model and emits an `ngModelChange` event.
+     *
+     * @param newValue The new value for the view model.
+     */
+    viewToModelUpdate(newValue: any): void {
+        this.viewModel = newValue;
+        this.update.emit(newValue);
+    }
+
     private _checkParentType(): void {
         if (!(this._parent instanceof BindFormGroupName) && this._parent instanceof AbstractBindFormGroupDirective) {
             ReactiveBindErrors.ngModelGroupException();
-        } else if (!(this._parent instanceof BindFormGroupName) && !(this._parent instanceof BindFormGroupDirective) && !(this._parent instanceof FormArrayName)) {
+        } else if (!(this._parent instanceof BindFormGroupName) && !(this._parent instanceof BindFormGroupDirective) && !(this._parent instanceof BindFormArrayName)) {
             ReactiveBindErrors.controlParentException();
         }
     }

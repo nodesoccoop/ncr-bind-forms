@@ -111,7 +111,7 @@ export class BindFormGroupName extends AbstractBindFormGroupDirective implements
 
 export const formArrayNameProvider: any = {
     provide: BindControlContainer,
-    useExisting: forwardRef(() => FormArrayName),
+    useExisting: forwardRef(() => BindFormArrayName),
 };
 
 /**
@@ -139,7 +139,7 @@ export const formArrayNameProvider: any = {
  * @publicApi
  */
 @Directive({ selector: '[formArrayName]', providers: [formArrayNameProvider] })
-export class FormArrayName extends BindControlContainer implements OnInit, OnDestroy {
+export class BindFormArrayName extends BindControlContainer implements OnInit, OnDestroy {
     /** @internal */
     _parent: BindControlContainer;
 
@@ -243,5 +243,5 @@ export class FormArrayName extends BindControlContainer implements OnInit, OnDes
 }
 
 function _hasInvalidParent(parent: BindControlContainer): boolean {
-    return !(parent instanceof BindFormGroupName) && !(parent instanceof BindFormGroupDirective) && !(parent instanceof FormArrayName);
+    return !(parent instanceof BindFormGroupName) && !(parent instanceof BindFormGroupDirective) && !(parent instanceof BindFormArrayName);
 }

@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Directive, ElementRef, Host, Input, OnDestroy, Optional, Renderer2, StaticProvider, forwardRef, ɵlooseIdentical as looseIdentical } from '@angular/core';
+import { Directive, ElementRef, Host, Input, OnDestroy, Optional, Renderer2, StaticProvider, forwardRef, HostListener } from '@angular/core';
 
 import { ControlBindValueAccessor, NG_BIND_VALUE_ACCESSOR } from './control_value_accessor';
 
 export const SELECT_VALUE_ACCESSOR: StaticProvider = {
     provide: NG_BIND_VALUE_ACCESSOR,
     useExisting: forwardRef(() => SelectControlBindValueAccessor),
-    multi: true
+    multi: true,
 };
 
 function _buildValueString(id: string | null, value: any): string {
@@ -84,29 +84,11 @@ function _extractId(valueString: string): string {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'select:not([multiple])[formBindControlName],select:not([multiple])[formBindControl],select:not([multiple])[ngBindModel]',
-    host: { '(change)': 'onChange($event.target.value)', '(blur)': 'onTouched()' },
-    providers: [SELECT_VALUE_ACCESSOR]
+    providers: [SELECT_VALUE_ACCESSOR],
 })
 export class SelectControlBindValueAccessor implements ControlBindValueAccessor {
-    value: any;
-    /** @internal */
-    _optionMap: Map<string, any> = new Map<string, any>();
-    /** @internal */
-    _idCounter: number = 0;
-
-    /**
-     * @description
-     * The registered callback function called when a change event occurs on the input element.
-     */
-    onChange = (_: any) => {};
-
-    /**
-     * @description
-     * The registered callback function called when a blur event occurs on the input element.
-     */
-    onTouched = () => {};
-
     /**
      * @description
      * Tracks the option comparison algorithm for tracking identities when
@@ -120,9 +102,28 @@ export class SelectControlBindValueAccessor implements ControlBindValueAccessor 
         this._compareWith = fn;
     }
 
-    private _compareWith: (o1: any, o2: any) => boolean = looseIdentical;
-
     constructor(private _renderer: Renderer2, private _elementRef: ElementRef) {}
+    value: any;
+    /** @internal */
+    _optionMap: Map<string, any> = new Map<string, any>();
+    /** @internal */
+    _idCounter = 0;
+
+    private _compareWith: (o1: any, o2: any) => boolean = Object.is;
+
+    /**
+     * @description
+     * The registered callback function called when a change event occurs on the input element.
+     */
+    @HostListener('change', ['$event.target.value'])
+    onChange = (_: any) => {};
+
+    /**
+     * @description
+     * The registered callback function called when a blur event occurs on the input element.
+     */
+    @HostListener('blur')
+    onTouched = () => {};
 
     /**
      * Sets the "value" property on the input element. The "selectedIndex"
@@ -202,7 +203,9 @@ export class SelectControlBindValueAccessor implements ControlBindValueAccessor 
  * @ngModule BindFormsModule
  * @publicApi
  */
+// tslint:disable-next-line: directive-selector
 @Directive({ selector: 'option' })
+// tslint:disable-next-line: directive-class-suffix
 export class NgSelectOption implements OnDestroy {
     /**
      * @description

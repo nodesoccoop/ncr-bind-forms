@@ -14,9 +14,9 @@ import { BindFormControlType } from './model';
 
 function isAbstractControlOptions(options: AbstractBindControlOptions | { [key: string]: any }): options is AbstractBindControlOptions {
     return (
-        (<AbstractBindControlOptions>options).asyncValidators !== undefined ||
-        (<AbstractBindControlOptions>options).validators !== undefined ||
-        (<AbstractBindControlOptions>options).updateOn !== undefined
+        (options as AbstractBindControlOptions).asyncValidators !== undefined ||
+        (options as AbstractBindControlOptions).validators !== undefined ||
+        (options as AbstractBindControlOptions).updateOn !== undefined
     );
 }
 
@@ -70,8 +70,8 @@ export class BindFormBuilder {
                 updateOn = options.updateOn != null ? options.updateOn : undefined;
             } else {
                 // `options` are legacy form group options
-                validators = options['validator'] != null ? options['validator'] : null;
-                asyncValidators = options['asyncValidator'] != null ? options['asyncValidator'] : null;
+                validators = options.validator != null ? options.validator : null;
+                asyncValidators = options.asyncValidator != null ? options.asyncValidator : null;
             }
         }
 

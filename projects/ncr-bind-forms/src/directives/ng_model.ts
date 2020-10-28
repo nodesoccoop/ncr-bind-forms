@@ -140,78 +140,12 @@ const resolvedPromise = (() => Promise.resolve(null))();
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: '[ngBindModel]:not([formBindControlName]):not([formBindControl])',
     providers: [formControlBinding],
     exportAs: 'ngBindModel',
 })
 export class NgBindModel extends NgBindControl implements OnChanges, OnDestroy {
-    public readonly control: BindFormControl = new BindFormControl();
-
-    // At runtime we coerce arbitrary values assigned to the "disabled" input to a "boolean".
-    // This is not reflected in the type of the property because outside of templates, consumers
-    // should only deal with booleans. In templates, a string is allowed for convenience and to
-    // match the native "disabled attribute" semantics which can be observed on input elements.
-    // This static member tells the compiler that values of type "string" can also be assigned
-    // to the input in a template.
-    /** @nodoc */
-    static ngAcceptInputType_isDisabled: boolean | string;
-
-    /** @internal */
-    _registered = false;
-
-    /**
-     * @description
-     * Internal reference to the view model value.
-     */
-    viewModel: any;
-
-    /**
-     * @description
-     * Tracks the name bound to the directive. The parent form
-     * uses this name as a key to retrieve this control's value.
-     */
-    // TODO(issue/24571): remove '!'.
-    @Input() name!: string;
-
-    /**
-     * @description
-     * Tracks whether the control is disabled.
-     */
-    // TODO(issue/24571): remove '!'.
-    @Input('disabled') isDisabled!: boolean;
-
-    /**
-     * @description
-     * Tracks the value bound to this directive.
-     */
-    @Input('ngBindModel') model: any;
-
-    /**
-     * @description
-     * Tracks the configuration options for this `ngBindModel` instance.
-     *
-     * **name**: An alternative to setting the name attribute on the form control element. See
-     * the [example](api/forms/NgBindModel#using-ngmodel-on-a-standalone-control) for using `NgBindModel`
-     * as a standalone control.
-     *
-     * **standalone**: When set to true, the `ngBindModel` will not register itself with its parent form,
-     * and acts as if it's not in the form. Defaults to false.
-     *
-     * **updateOn**: Defines the event upon which the form control value and validity update.
-     * Defaults to 'change'. Possible values: `'change'` | `'blur'` | `'submit'`.
-     *
-     */
-    // TODO(issue/24571): remove '!'.
-    @Input('ngModelOptions')
-    options!: { name?: string; standalone?: boolean; updateOn?: BindFormHooks };
-
-    /**
-     * @description
-     * Event emitter for producing the `ngModelChange` event after
-     * the view model updates.
-     */
-    @Output('ngModelChange') update = new EventEmitter();
-
     constructor(
         @Optional() @Host() parent: BindControlContainer,
         @Optional() @Self() @Inject(NG_BIND_VALIDATORS) validators: Array<BindValidator | BindValidatorFn>,
@@ -226,35 +160,6 @@ export class NgBindModel extends NgBindControl implements OnChanges, OnDestroy {
         this._rawValidators = validators || [];
         this._rawAsyncValidators = asyncValidators || [];
         this.valueAccessor = selectValueAccessor(this, valueAccessors);
-    }
-
-    /**
-     * @description
-     * A lifecycle method called when the directive's inputs change. For internal use
-     * only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
-    ngOnChanges(changes: SimpleChanges) {
-        this._checkForErrors();
-        if (!this._registered) this._setUpControl();
-        if ('isDisabled' in changes) {
-            this._updateDisabled(changes);
-        }
-
-        if (isPropertyUpdated(changes, this.viewModel)) {
-            this._updateValue(this.model);
-            this.viewModel = this.model;
-        }
-    }
-
-    /**
-     * @description
-     * Lifecycle method called before the directive's instance is destroyed. For internal
-     * use only.
-     */
-    ngOnDestroy(): void {
-        this.formDirective && this.formDirective.removeControl(this);
     }
 
     /**
@@ -290,6 +195,107 @@ export class NgBindModel extends NgBindControl implements OnChanges, OnDestroy {
      */
     get asyncValidator(): AsyncBindValidatorFn | null {
         return composeAsyncValidators(this._rawAsyncValidators);
+    }
+
+    // At runtime we coerce arbitrary values assigned to the "disabled" input to a "boolean".
+    // This is not reflected in the type of the property because outside of templates, consumers
+    // should only deal with booleans. In templates, a string is allowed for convenience and to
+    // match the native "disabled attribute" semantics which can be observed on input elements.
+    // This static member tells the compiler that values of type "string" can also be assigned
+    // to the input in a template.
+    /** @nodoc */
+    // tslint:disable-next-line: variable-name
+    static ngAcceptInputType_isDisabled: boolean | string;
+    public readonly control: BindFormControl = new BindFormControl();
+
+    /** @internal */
+    _registered = false;
+
+    /**
+     * @description
+     * Internal reference to the view model value.
+     */
+    viewModel: any;
+
+    /**
+     * @description
+     * Tracks the name bound to the directive. The parent form
+     * uses this name as a key to retrieve this control's value.
+     */
+    // TODO(issue/24571): remove '!'.
+    @Input() name!: string;
+
+    /**
+     * @description
+     * Tracks whether the control is disabled.
+     */
+    // TODO(issue/24571): remove '!'.
+    // tslint:disable-next-line: no-input-rename
+    @Input('disabled') isDisabled!: boolean;
+
+    /**
+     * @description
+     * Tracks the value bound to this directive.
+     */
+    // tslint:disable-next-line: no-input-rename
+    @Input('ngBindModel') model: any;
+
+    /**
+     * @description
+     * Tracks the configuration options for this `ngBindModel` instance.
+     *
+     * **name**: An alternative to setting the name attribute on the form control element. See
+     * the [example](api/forms/NgBindModel#using-ngmodel-on-a-standalone-control) for using `NgBindModel`
+     * as a standalone control.
+     *
+     * **standalone**: When set to true, the `ngBindModel` will not register itself with its parent form,
+     * and acts as if it's not in the form. Defaults to false.
+     *
+     * **updateOn**: Defines the event upon which the form control value and validity update.
+     * Defaults to 'change'. Possible values: `'change'` | `'blur'` | `'submit'`.
+     *
+     */
+    // TODO(issue/24571): remove '!'.
+    // tslint:disable-next-line: no-input-rename
+    @Input('ngModelOptions')
+    options!: { name?: string; standalone?: boolean; updateOn?: BindFormHooks };
+
+    /**
+     * @description
+     * Event emitter for producing the `ngModelChange` event after
+     * the view model updates.
+     */
+    // tslint:disable-next-line: no-output-rename
+    @Output('ngModelChange') update = new EventEmitter();
+
+    /**
+     * @description
+     * A lifecycle method called when the directive's inputs change. For internal use
+     * only.
+     *
+     * @param changes A object of key/value pairs for the set of changed inputs.
+     */
+    ngOnChanges(changes: SimpleChanges) {
+        this._checkForErrors();
+        if (!this._registered) this._setUpControl();
+        if ('isDisabled' in changes) {
+            this._updateDisabled(changes);
+        }
+
+        if (isPropertyUpdated(changes, this.viewModel)) {
+            this._updateValue(this.model);
+            this.viewModel = this.model;
+        }
+    }
+
+    /**
+     * @description
+     * Lifecycle method called before the directive's instance is destroyed. For internal
+     * use only.
+     */
+    ngOnDestroy(): void {
+        // tslint:disable-next-line: no-unused-expression
+        this.formDirective && this.formDirective.removeControl(this);
     }
 
     /**
@@ -354,7 +360,7 @@ export class NgBindModel extends NgBindControl implements OnChanges, OnDestroy {
     }
 
     private _updateDisabled(changes: SimpleChanges) {
-        const disabledValue = changes['isDisabled'].currentValue;
+        const disabledValue = changes?.isDisabled.currentValue;
 
         const isDisabled = disabledValue === '' || (disabledValue && disabledValue !== 'false');
 

@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { isDevMode, ɵlooseIdentical as looseIdentical } from '@angular/core';
+import { isDevMode } from '@angular/core';
 
 import { BindFormArray, BindFormControl, BindFormGroup } from '../model';
 import { BindValidators } from '../validators';
@@ -22,7 +22,7 @@ import { normalizeAsyncValidator, normalizeValidator } from './normalize_validat
 import { NumberBindValueAccessor } from './number_value_accessor';
 import { RadioControlBindValueAccessor } from './radio_control_value_accessor';
 import { RangeBindValueAccessor } from './range_value_accessor';
-import { FormArrayName } from './reactive_directives/form_group_name';
+import { BindFormArrayName } from './reactive_directives/form_group_name';
 import { ReactiveBindErrors } from './reactive_errors';
 import { SelectControlBindValueAccessor } from './select_control_value_accessor';
 import { SelectMultipleControlBindValueAccessor } from './select_multiple_control_value_accessor';
@@ -155,7 +155,7 @@ function setUpModelChangePipeline(control: BindFormControl, dir: NgBindControl):
     });
 }
 
-export function setUpFormContainer(control: BindFormGroup | BindFormArray, dir: AbstractBindFormGroupDirective | FormArrayName) {
+export function setUpFormContainer(control: BindFormGroup | BindFormArray, dir: AbstractBindFormGroupDirective | BindFormArrayName) {
     if (control == null) {
         _throwError(dir, 'Cannot find control with');
     }
@@ -200,7 +200,7 @@ export function isPropertyUpdated(changes: { [key: string]: any }, viewModel: an
     if (change.isFirstChange()) {
         return true;
     }
-    return !looseIdentical(viewModel, change.currentValue);
+    return !Object.is(viewModel, change.currentValue);
 }
 
 const BUILTIN_ACCESSORS = [

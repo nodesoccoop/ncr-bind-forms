@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Directive, ElementRef, Injectable, Injector, Input, OnDestroy, OnInit, Renderer2, forwardRef } from '@angular/core';
+import { Directive, ElementRef, Injectable, Injector, Input, OnDestroy, OnInit, Renderer2, forwardRef, HostListener } from '@angular/core';
 
 import { ControlBindValueAccessor, NG_BIND_VALUE_ACCESSOR } from './control_value_accessor';
 import { NgBindControl } from './ng_control';
@@ -14,7 +14,7 @@ import { NgBindControl } from './ng_control';
 export const RADIO_VALUE_ACCESSOR: any = {
     provide: NG_BIND_VALUE_ACCESSOR,
     useExisting: forwardRef(() => RadioControlBindValueAccessor),
-    multi: true
+    multi: true,
 };
 
 /**
@@ -85,9 +85,9 @@ export class RadioControlRegistry {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'input[type=radio][formBindControlName],input[type=radio][formBindControl],input[type=radio][ngBindModel]',
-    host: { '(change)': 'onChange()', '(blur)': 'onTouched()' },
-    providers: [RADIO_VALUE_ACCESSOR]
+    providers: [RADIO_VALUE_ACCESSOR],
 })
 export class RadioControlBindValueAccessor implements ControlBindValueAccessor, OnDestroy, OnInit {
     /** @internal */
@@ -104,12 +104,14 @@ export class RadioControlBindValueAccessor implements ControlBindValueAccessor, 
      * @description
      * The registered callback function called when a change event occurs on the input element.
      */
+    @HostListener('change')
     onChange = () => {};
 
     /**
      * @description
      * The registered callback function called when a blur event occurs on the input element.
      */
+    @HostListener('blur')
     onTouched = () => {};
 
     /**
@@ -181,7 +183,7 @@ export class RadioControlBindValueAccessor implements ControlBindValueAccessor, 
     /**
      * Sets the "value" on the radio input element and unchecks it.
      *
-     * @param value
+     * @param value Value of the Radio Control
      */
     fireUncheck(value: any): void {
         this.writeValue(value);

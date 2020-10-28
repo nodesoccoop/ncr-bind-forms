@@ -10,17 +10,17 @@ import { AbstractBindControl } from '../model';
 import { AsyncBindValidator, AsyncBindValidatorFn, BindValidator, BindValidatorFn } from './validators';
 
 export function normalizeValidator(validator: BindValidatorFn | BindValidator): BindValidatorFn {
-    if ((<BindValidator>validator).validate) {
-        return (c: AbstractBindControl) => (<BindValidator>validator).validate(c);
+    if ((validator as BindValidator).validate) {
+        return (c: AbstractBindControl) => (validator as BindValidator).validate(c);
     } else {
-        return <BindValidatorFn>validator;
+        return validator as BindValidatorFn;
     }
 }
 
 export function normalizeAsyncValidator(validator: AsyncBindValidatorFn | AsyncBindValidator): AsyncBindValidatorFn {
-    if ((<AsyncBindValidator>validator).validate) {
-        return (c: AbstractBindControl) => (<AsyncBindValidator>validator).validate(c);
+    if ((validator as AsyncBindValidator).validate) {
+        return (c: AbstractBindControl) => (validator as AsyncBindValidator).validate(c);
     } else {
-        return <AsyncBindValidatorFn>validator;
+        return validator as AsyncBindValidatorFn;
     }
 }

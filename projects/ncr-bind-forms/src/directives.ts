@@ -21,7 +21,7 @@ import { RangeBindValueAccessor } from './directives/range_value_accessor';
 import { BindFormControlDirective } from './directives/reactive_directives/form_control_directive';
 import { BindFormControlName } from './directives/reactive_directives/form_control_name';
 import { BindFormGroupDirective } from './directives/reactive_directives/form_group_directive';
-import { FormArrayName, BindFormGroupName } from './directives/reactive_directives/form_group_name';
+import { BindFormArrayName, BindFormGroupName } from './directives/reactive_directives/form_group_name';
 import { NgSelectOption, SelectControlBindValueAccessor } from './directives/select_control_value_accessor';
 import { NgSelectMultipleOption, SelectMultipleControlBindValueAccessor } from './directives/select_multiple_control_value_accessor';
 import { CheckboxRequiredValidator, EmailValidator, MaxLengthValidator, MinLengthValidator, PatternValidator, RequiredValidator } from './directives/validators';
@@ -40,7 +40,7 @@ export { RangeBindValueAccessor } from './directives/range_value_accessor';
 export { BindFormControlDirective, NG_MODEL_WITH_FORM_CONTROL_WARNING } from './directives/reactive_directives/form_control_directive';
 export { BindFormControlName } from './directives/reactive_directives/form_control_name';
 export { BindFormGroupDirective } from './directives/reactive_directives/form_group_directive';
-export { FormArrayName, BindFormGroupName } from './directives/reactive_directives/form_group_name';
+export { BindFormArrayName, BindFormGroupName } from './directives/reactive_directives/form_group_name';
 export { NgSelectOption, SelectControlBindValueAccessor } from './directives/select_control_value_accessor';
 export { NgSelectMultipleOption, SelectMultipleControlBindValueAccessor } from './directives/select_multiple_control_value_accessor';
 
@@ -67,7 +67,7 @@ export const BIND_SHARED_FORM_DIRECTIVES: Type<any>[] = [
 
 export const BIND_TEMPLATE_DRIVEN_DIRECTIVES: Type<any>[] = [NgBindModel, NgBindModelGroup, NgBindFormDirective];
 
-export const BIND_REACTIVE_DRIVEN_DIRECTIVES: Type<any>[] = [BindFormControlDirective, BindFormGroupDirective, BindFormControlName, BindFormGroupName, FormArrayName];
+export const BIND_REACTIVE_DRIVEN_DIRECTIVES: Type<any>[] = [BindFormControlDirective, BindFormGroupDirective, BindFormControlName, BindFormGroupName, BindFormArrayName];
 
 /**
  * Internal module used for sharing directives between BindFormsModule and BindReactiveFormsModule

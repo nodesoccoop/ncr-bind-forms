@@ -46,6 +46,7 @@ export const modelGroupProvider: any = {
  * @ngModule BindFormsModule
  * @publicApi
  */
+// tslint:disable-next-line: directive-selector
 @Directive({ selector: '[ngBindModelGroup]', providers: [modelGroupProvider], exportAs: 'ngBindModelGroup' })
 export class NgBindModelGroup extends AbstractBindFormGroupDirective implements OnInit, OnDestroy {
     /**

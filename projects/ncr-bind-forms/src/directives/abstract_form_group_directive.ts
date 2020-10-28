@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { OnDestroy, OnInit } from '@angular/core';
+import { Directive, OnDestroy, OnInit } from '@angular/core';
 
 import { BindFormGroup } from '../model';
 
@@ -18,6 +18,7 @@ import { BindControlContainer, BindForm, composeAsyncValidators, composeValidato
  *
  * @publicApi
  */
+@Directive()
 export class AbstractBindFormGroupDirective extends BindControlContainer implements OnInit, OnDestroy {
     /**
      * @description

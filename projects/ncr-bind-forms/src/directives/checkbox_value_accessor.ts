@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Directive, ElementRef, Renderer2, forwardRef } from '@angular/core';
+import { Directive, ElementRef, Renderer2, forwardRef, HostListener } from '@angular/core';
 
 import { ControlBindValueAccessor, NG_BIND_VALUE_ACCESSOR } from './control_value_accessor';
 
 export const CHECKBOX_VALUE_ACCESSOR: any = {
     provide: NG_BIND_VALUE_ACCESSOR,
     useExisting: forwardRef(() => CheckboxControlBindValueAccessor),
-    multi: true
+    multi: true,
 };
 
 /**
@@ -40,21 +40,23 @@ export const CHECKBOX_VALUE_ACCESSOR: any = {
  * @publicApi
  */
 @Directive({
+    // tslint:disable-next-line: directive-selector
     selector: 'input[type=checkbox][formBindControlName],input[type=checkbox][formBindControl],input[type=checkbox][ngBindModel]',
-    host: { '(change)': 'onChange($event.target.checked)', '(blur)': 'onTouched()' },
-    providers: [CHECKBOX_VALUE_ACCESSOR]
+    providers: [CHECKBOX_VALUE_ACCESSOR],
 })
 export class CheckboxControlBindValueAccessor implements ControlBindValueAccessor {
     /**
      * @description
      * The registered callback function called when a change event occurs on the input element.
      */
+    @HostListener('change', ['$event.target.checked'])
     onChange = (_: any) => {};
 
     /**
      * @description
      * The registered callback function called when a blur event occurs on the input element.
      */
+    @HostListener('blur')
     onTouched = () => {};
 
     constructor(private _renderer: Renderer2, private _elementRef: ElementRef) {}

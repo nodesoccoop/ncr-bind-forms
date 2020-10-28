@@ -71,7 +71,7 @@ export abstract class NgBindControl extends AbstractBindControlDirective {
      * @throws An exception that this method is not implemented
      */
     get validator(): BindValidatorFn | null {
-        return <BindValidatorFn>unimplemented();
+        return unimplemented() as BindValidatorFn;
     }
 
     /**
@@ -81,7 +81,7 @@ export abstract class NgBindControl extends AbstractBindControlDirective {
      * @throws An exception that this method is not implemented
      */
     get asyncValidator(): AsyncBindValidatorFn | null {
-        return <AsyncBindValidatorFn>unimplemented();
+        return unimplemented() as AsyncBindValidatorFn;
     }
 
     /**
